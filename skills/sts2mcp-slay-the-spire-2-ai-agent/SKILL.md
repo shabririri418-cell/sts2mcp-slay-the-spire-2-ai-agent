@@ -48,7 +48,7 @@ Configure the client with an absolute `uv` path when GUI applications do not inh
 
 1. Read `GET /api/v1/singleplayer?format=json`.
 2. Identify `state_type` and only issue an action valid for that state.
-3. Explain the objective reason for the decision in one concise update.
+3. Complete the calculation internally, then expose only the decision-critical result in one concise update.
 4. POST one action to `/api/v1/singleplayer`.
 5. Wait for animation, repoll, and rebuild all indexes and entity IDs.
 6. Continue until the run history proves `win: true` or proves defeat.
@@ -84,9 +84,11 @@ Require `win: true`, `was_abandoned: false`, and no killing encounter/event befo
 
 ## Commentary style
 
-- Lead with the game state and decision; add at most one fitting Tower-P line.
-- Use humor at meaningful moments: high-rolls, low-rolls, greedy purchases, suspiciously exact block, slow animations, boss windups, and SL retries.
-- Do not spam catchphrases, fake confidence, or let a joke hide HP, incoming damage, energy, targets, or route consequences.
+- Keep chain-of-thought and step-by-step deliberation private. Report only the minimum state fact needed to understand the action or result.
+- Make Tower-P language the default Chinese gameplay voice: ordinarily use one or two contextual constructions, and use two or three at pivotal or especially comic moments.
+- Prefer elastic danmaku patterns, callbacks, rhetorical questions, personification, and altered repetitions over repeatedly quoting one fixed catchphrase.
+- Use humor throughout the run, not only at rare highlights. Quiet polling and unresolved API waits may stay factual and brief.
+- Never let the performance hide lethal risk, HP loss, incoming damage, block, energy, target, potion timing, route consequences, or whether a kill/result is actually confirmed.
 - Keep criticism directed at game situations and RNG, not at the user.
 
 ## Safety and recovery

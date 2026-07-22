@@ -65,6 +65,23 @@ The previous turn-lock failure came from ending turns while a card animation or 
 
 Known compatibility bug: `NDeckEnchantSelectScreen` may acknowledge three `select_card` calls and `confirm_selection` while remaining open. Never click the game window. Poll, retry confirmation once after a delay, then SL/restart. If the same checkpoint reproduces the defect, stop and update/fix the mod's confirm handling before continuing.
 
+## 污浊药水 (Tainted Potion) timing in merchant events
+
+Use the following order whenever 污浊药水 (Tainted Potion) must target the merchant. This is a strict event-state requirement, not an optimization preference:
+
+1. Enter the merchant event and remain on the pre-purchase event screen. Do **not** choose the option that opens the shop inventory yet.
+2. Refresh state and confirm that the merchant is still exposed as a valid target. Read its current `entity_id`; never reuse an ID from an earlier state.
+3. Use the potion while that merchant target exists:
+
+```json
+{"action":"use_potion","slot":0,"target":"MERCHANT_ENTITY_ID"}
+```
+
+4. Wait for resolution and refresh state. Confirm that the potion was consumed and its effect resolved before continuing.
+5. Only then choose the event option/action that enters the purchase screen.
+
+Do not open the purchase screen first: that screen removes the merchant target needed by the potion. Do not blindly leave and re-enter the shop, because exiting may advance or end the event. If already on the purchase screen, use the potion only after a reversible exit has been confirmed by state and the merchant target has reappeared; otherwise preserve the potion and report that the valid targeting window was missed.
+
 ## Issues observed in a complete run
 
 - A successful POST only means the input was queued. Confirm HP, energy, hand, enemy HP, and `state_type` afterward.

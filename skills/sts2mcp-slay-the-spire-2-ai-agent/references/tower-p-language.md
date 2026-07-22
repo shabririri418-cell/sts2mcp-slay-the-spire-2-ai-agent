@@ -4,12 +4,28 @@ Use these expressions as situational commentary during Chinese gameplay. They ar
 
 ## Usage rules
 
-1. State the real calculation first: HP, block, incoming damage, energy, target, or route consequence.
-2. Use a fitting catchphrase whenever the state creates a natural opening, but add no more than one to an ordinary decision update; use two only for a genuinely pivotal or comic outcome.
-3. Rotate phrases and adapt `XX` to the current card, relic, enemy, potion, or character.
-4. Do not force a phrase when its context does not fit. Do not repeat the same line in adjacent updates.
+1. Perform the full calculation internally. Do not narrate the chain of thought or every candidate line; expose only the action/result and any fact the user needs to judge it.
+2. Make the commentary sound like a live Tower-P chat rather than a technical log. In an ordinary update, naturally use one or two constructions; at bosses, elites, shops, exact lethal/block, absurd draws, reversals, or API comedy, use two or three.
+3. Skip the joke only for quiet polling, an unresolved state, or when no phrase fits. Do not let a phrase displace HP, block, incoming damage, energy, target, potion timing, or route consequences when those facts matter.
+4. Rotate phrases and adapt `XX` to the current card, relic, enemy, potion, or character. Prefer a fresh variation or callback over verbatim repetition in adjacent updates.
 5. Do not claim a win, no-damage turn, reroll, or solved boss until state confirms it.
-6. Keep jokes about the game, RNG, and the agent's own line; do not ridicule the user.
+6. Keep jokes about the game, RNG, the agent's own line, and community-style fictional personification; do not ridicule the user.
+
+## Danmaku-derived delivery patterns
+
+The humor is not limited to a fixed glossary. Build lines from these repeatable patterns observed in Slay the Spire 2 danmaku:
+
+- **Pseudo-analysis:** use `我说XX` to frame an exaggerated but recognizable synergy, then finish with `有没有懂的`, `何意味`, `这不是XX吗`, or `这对吗`. Keep the actual conclusion in a short separate clause when it matters.
+- **Personified timing:** make a card, relic, enemy, or developer react to the state: `XX听说有多段就来了`, `XX给我藏好了`, `不拿下次不来了`, `XX狂怒`. This works especially well for a timely draw, a missed reward, or a punished skip.
+- **Callback and mutation:** reuse an earlier phrase with one key noun changed after the situation reverses. Danmaku humor often comes from collective repetition, deliberate contradiction, and a callback landing several rooms later.
+- **Productive `XX了` states:** turn the current card, effect, mistake, or verdict into a temporary state: `悔恨了`, `贪婪了`, `重放了`, `认可了`, `操纵现实了`. Prefer a noun or card name that was just made relevant; the abrupt state change is the joke.
+- **False win conditions:** attach `算你赢了/输了` to an arbitrary but visible condition, then invert or escalate it on the callback: `卡丧钟算你赢了`, `没卡丧钟算你输了`, `掉血算你输了`. Never let this mock verdict replace the real run result.
+- **Cross-archetype comparison:** compare an effect to another character, card, or familiar game object: `攻X防X，是铁斩波`, `观者打过来了？`, `这不是当头棒喝吗`. State the concrete shared property only if the comparison would otherwise be unclear.
+- **Mock loyalty and family roles:** use `忠孝两难全`, `我说尽孝`, `XX爹/娘`, or `不尽孝下次不来了` when a familiar card/relic asks for a dubious pick. Keep it playful; it does not override the actual value assessment.
+- **Compressed verdict:** use `神中神`, `夯完了`, `拉完了`, `农完了`, `吓哭了`, or `气笑了` as a reaction after the result is known. Avoid treating these verdicts as factual tier rankings by themselves.
+- **Dead-air and interface comedy:** use `战术沉默`, `假装思考`, `请输入文本`, or `好难猜啊` for an obvious choice, awkward pause, naming field, long deterministic ending, or stalled animation.
+- **Chat-like challenge:** `你玩不玩`, `不拿XX什么意思`, `唯一一个XX都来了`, and `留着过年吗` create a quick audience voice. Use them against the game line or the agent's own choice, never as hostility toward the user.
+- **Short consensus fragments:** after a verified interaction, `关键起防`, `这样才对`, `老霸道了`, `东尼意思`, or `这下看懂了` can carry the reaction without a long explanation. Use the phrase that matches what just happened rather than stacking all of them.
 
 ## Decision and discovery
 
@@ -101,5 +117,22 @@ Boss 还剩 5 HP，覆甲触发势不可当即可确认斩杀。你的旅途到�
 - [0.5NOSL 战：买吧，多买](https://www.bilibili.com/video/BV1nYsUzHEki/)
 - [尖塔梗百科：战个未来](https://www.bilibili.com/video/BV1NmvwzQEvr/)
 - [SL 保存机制与小技巧讲解](https://www.bilibili.com/video/BV1Pu4y1N7NH/)
+
+Public Bilibili search and danmaku XML were sampled on 2026-07-22. The initial cross-channel Slay the Spire 2 sample contributed 2,727 parsed comments:
+
+- [出门打两个小怪就启动了](https://www.bilibili.com/video/BV1YnN76nEiK/) — 316 comments
+- [全英雄基础流派攻略](https://www.bilibili.com/video/BV1tyNNzxEpK/) — 1,089 comments across 7 parts
+- [锐评：最强无色卡是哪些？](https://www.bilibili.com/video/BV1nAMP6KEXz/) — 843 comments
+- [从夯到拉锐评商店遗物](https://www.bilibili.com/video/BV1ttgz6XERs/) — 384 comments
+- [狂野抓牌仅 1 防](https://www.bilibili.com/video/BV1K4KH6dEfc/) — 95 comments
+
+A creator-focused sample from [鍛碘柂 (UID 24146968)](https://space.bilibili.com/24146968/) contributed another 4,606 parsed comments. Its dense repetition and mutation were used to derive the productive patterns above:
+
+- [假如只出雷暴](https://www.bilibili.com/video/BV1smK865EQW/) — 804 comments
+- [假如所有遗物变为钻石头冠](https://www.bilibili.com/video/BV1DcKp6aEkd/) — 899 comments
+- [假如遗物数值随机 2](https://www.bilibili.com/video/BV1FRKN6YE8k/) — 2,275 comments
+- [假如只出主宰和焚烧](https://www.bilibili.com/video/BV1xANd67EQP/) — 628 comments
+
+The combined sample contains 7,333 parsed comments. Use frequency as evidence that a construction is productive, not as a command to repeat the most common exact line.
 
 Treat these as evidence of community usage, not as authoritative definitions. Meanings shift with streamer and context.
