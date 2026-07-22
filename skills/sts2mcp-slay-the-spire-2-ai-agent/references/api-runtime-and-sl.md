@@ -1,0 +1,133 @@
+# Runtime, State Machine, and SL
+
+Read this file completely before controlling a run.
+
+## Current REST surface
+
+Base URL: `http://localhost:15526`
+
+```text
+GET  /api/v1/singleplayer?format=json
+POST /api/v1/singleplayer
+GET  /api/v1/profile
+GET  /api/v1/compendium
+GET  /api/v1/wiki?query=...
+GET  /api/v1/profiles
+POST /api/v1/profiles
+```
+
+The running `v0.4.0` server uses the same `/singleplayer` endpoint for state and actions. Refresh state after every action because card, reward, selection, and shop indexes are positional and change immediately.
+
+## Common actions
+
+```json
+{"action":"play_card","card_index":2,"target":"ENEMY_ENTITY_ID"}
+{"action":"use_potion","slot":1,"target":"ENEMY_ENTITY_ID"}
+{"action":"discard_potion","slot":0}
+{"action":"end_turn"}
+{"action":"choose_map_node","index":0}
+{"action":"choose_event_option","index":1}
+{"action":"choose_rest_option","index":0}
+{"action":"claim_reward","index":0}
+{"action":"select_card_reward","card_index":1}
+{"action":"skip_card_reward"}
+{"action":"select_card","index":4}
+{"action":"confirm_selection"}
+{"action":"combat_select_card","card_index":0}
+{"action":"combat_confirm_selection"}
+{"action":"shop_purchase","index":7}
+{"action":"claim_treasure_relic","index":0}
+{"action":"proceed"}
+{"action":"menu_select","option":"continue"}
+```
+
+Use `target` only when the card or potion requires an enemy. Use the current `entity_id`, not a stale combat index.
+
+## Timing and turn-lock rules
+
+- Wait `900-1500 ms` after ordinary cards and choices.
+- Wait `5-6 s` after `end_turn`, combat-ending attacks, Whirlwind, Fiend Fire, or multi-step exhaust effects.
+- Wait `10-15 s` for shop-wide automatic acquisition and relic-triggered selections.
+- Before ending a turn, require `battle.turn == "player"`, `battle.is_play_phase == true`, and an ordinary combat state rather than a selection overlay.
+- If the server reports `PlayerActionsDisabled`, a card is still resolving. Wait and repoll; do not send another `end_turn`.
+
+The previous turn-lock failure came from ending turns while a card animation or selection mode still owned the hand. Timing plus state gating prevents it.
+
+## Selection-state matrix
+
+| `state_type` | Action | Notes |
+|---|---|---|
+| `card_reward` | `select_card_reward(card_index)` | Reward indexes are not card indexes. |
+| `card_select` single preview | `select_card(index)`, then `confirm_selection` | Poll for `preview_showing: true`. |
+| `card_select` choose-one | `select_card(index)` | Combat pile choices such as Headbutt often close immediately; do not confirm. |
+| `hand_select` | `combat_select_card(card_index)`, then `combat_confirm_selection` | Burning Pact and similar hand effects use this path. |
+| `rewards` | `claim_reward(index)` | Re-fetch after every claim; remaining indexes compact. |
+
+Known compatibility bug: `NDeckEnchantSelectScreen` may acknowledge three `select_card` calls and `confirm_selection` while remaining open. Never click the game window. Poll, retry confirmation once after a delay, then SL/restart. If the same checkpoint reproduces the defect, stop and update/fix the mod's confirm handling before continuing.
+
+## Issues observed in a complete run
+
+- A successful POST only means the input was queued. Confirm HP, energy, hand, enemy HP, and `state_type` afterward.
+- Headbutt opens `NCombatPileCardSelectScreen` as `card_select`, not `hand_select`.
+- Burning Pact opens `hand_select` and requires `card_index`, not `index`.
+- Card rewards require `select_card_reward` with `card_index`; `choose_card` is invalid.
+- Relic and potion acquisition animations can reorder or temporarily hide state.
+- Lord's Parasol acquires shop cards and relics sequentially without spending gold. A full potion belt can leave potions stocked and stall the sequence. Discard only the potion chosen for replacement, repoll, and purchase manually if automatic acquisition does not resume.
+- A shop can accept `proceed` even when `shop.can_proceed` is false after all relevant stock is resolved.
+- Chemical X adds two effect counts even when a generated X-cost card is played for zero energy.
+- Post-run `game_over.player.hp == 0` does not prove death. The newest run-history entry is authoritative.
+- `compendium.current_run.is_in_progress` can lag immediately after the ending; prefer `sections.run_history.entries`.
+
+## Save/load timeline technique
+
+Use SL only when the user has authorized it. Treat it as controlled branch exploration, not as save-file editing.
+
+Slay the Spire 2 automatically checkpoints at the beginning of combats and events. Exploit that boundary as follows:
+
+1. At the untouched combat/event start, wait for saving to finish and record floor, room/event ID, HP, deck/relic state, enemies/options, hand, and intents.
+2. Try one clearly labeled branch and record its actions and outcome.
+3. To reject the branch, exit before entering another room or creating a later checkpoint. Do not choose the next map node.
+4. Prefer a graceful window close through the OS process API. Wait until `http://localhost:15526/` is unreachable before relaunching.
+5. Relaunch the same installed game executable or Steam app, wait for the REST server, then use `menu_select` with `option: "continue"`.
+6. Verify that floor, room/event, HP, enemies/options, and initial hand match the recorded checkpoint before trying another branch.
+7. Stop retrying when the improvement is negligible, the same deterministic result repeats, or restart stability degrades.
+
+Do not force-kill while a save icon, reward transition, or room transition is active. Use forced process termination only after graceful close fails and the user's SL authorization explicitly covers forced restarts.
+
+### Changing the timeline
+
+Reloading and repeating identical actions normally reproduces identical outcomes. Change the order or presence of RNG-consuming actions to explore a different branch:
+
+- draw before or after another action;
+- change random-target attack order;
+- generate a random card before another random effect;
+- alter potion timing;
+- exhaust a different card;
+- choose a different event option or card-selection order;
+- finish the fight through a different action sequence before checking rewards.
+
+Do not promise a reroll. The game can use separate or fixed RNG streams, so some rewards, upgrades, transforms, intents, or event results remain identical. Label an unchanged reload `0.5nosl`: information was gained, but the branch was not materially rerolled.
+
+Keep an SL ledger:
+
+```text
+checkpoint: act/floor/room
+branch A: actions -> HP/reward/result
+branch B: actions -> HP/reward/result
+chosen: branch X, objective reason
+restarts: N
+```
+
+Prefer the branch with the best run-winning probability, not merely the flashiest immediate roll.
+
+## Victory verification
+
+```powershell
+$c = Invoke-RestMethod 'http://localhost:15526/api/v1/compendium'
+$latest = $c.sections.run_history.entries |
+  Sort-Object last_write_time_utc -Descending |
+  Select-Object -First 1
+$latest | Select-Object win,was_abandoned,killed_by_encounter,killed_by_event,ascension,seed
+```
+
+Report victory only when `win` is true and `was_abandoned` is false.

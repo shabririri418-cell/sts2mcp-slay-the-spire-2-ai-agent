@@ -1,73 +1,40 @@
 ---
 name: sts2mcp-slay-the-spire-2-ai-agent
-description: Control and automate Slay the Spire 2 gameplay through REST API or MCP server for AI agents
-triggers:
-  - help me set up AI agent for Slay the Spire 2
-  - how do I use the STS2MCP mod
-  - connect AI to Slay the Spire 2
-  - automate Slay the Spire 2 runs
-  - integrate Claude with STS2
-  - build an agent to play Slay the Spire
-  - configure STS2MCP server
-  - access Slay the Spire 2 game state
+description: Control, automate, troubleshoot, and complete Slay the Spire 2 runs through the STS2MCP localhost REST API or MCP server. Use for installation, game-state inspection, combat, map routing, rewards, shops, events, rest sites, save-and-load retries, run verification, or AI-agent gameplay commentary.
 ---
 
-# STS2MCP: Slay the Spire 2 AI Agent Skill
+# STS2MCP Slay the Spire 2 Agent
 
-> Skill by [ara.so](https://ara.so) — MCP Skills collection.
+Control the game through structured state and actions. Optimize for completing the run, preserving HP, and keeping every decision auditable.
 
-STS2MCP is a mod for Slay the Spire 2 that exposes game state and actions via a localhost REST API, with an optional MCP server for AI agent integration. It enables fully automated gameplay for singleplayer and multiplayer runs, including menu navigation, character selection, lobby control, and in-game decision making.
+## Required references
 
-## What It Does
+- Before controlling a run, read [references/api-runtime-and-sl.md](references/api-runtime-and-sl.md) completely. It contains the current REST schema, state machine, timing, recovery rules, and save/load procedure.
+- Before narrating a run in Chinese, read [references/tower-p-language.md](references/tower-p-language.md) completely. Use its phrases contextually without obscuring decisions.
 
-- **Game State Access**: Read current game state (cards, relics, potions, enemies, map, etc.)
-- **Action Control**: Play cards, use potions, make choices, navigate menus
-- **Profile Management**: Switch profiles, access compendium data, search wiki entries
-- **Multiplayer Support**: Host/join co-op games, control both singleplayer and multiplayer flows
-- **MCP Integration**: Built-in MCP server for seamless Claude Desktop/Code integration
+## Non-negotiable control boundary
+
+- Use only STS2MCP REST/MCP actions for gameplay input.
+- Do not use Computer Use, screenshots, coordinate clicks, keyboard injection, or other direct screen control while playing.
+- If the API cannot complete a selection, wait, repoll, retry once, then use the documented save/load recovery or report the compatibility bug. Never work around it by clicking the game window.
+- OS process lifecycle commands are allowed only for the documented save/load retry and only when the user has authorized SL or repeated retries.
+- Never edit run-save files to manufacture an outcome.
 
 ## Installation
 
-### 1. Install the Game Mod
+Install the latest compatible release from [Gennadiyev/STS2MCP](https://github.com/Gennadiyev/STS2MCP/releases/latest):
 
-Download the latest release from [GitHub](https://github.com/Gennadiyev/STS2MCP/releases/latest).
+1. Copy `STS2_MCP.dll` and its JSON manifest into the game's `mods` directory.
+2. Enable mod support and launch the game.
+3. Verify the server:
 
-**Windows/Linux:**
-```bash
-# Copy to game mods directory
-cp STS2_MCP.dll "<game_install>/mods/"
-cp STS2_MCP.json "<game_install>/mods/"
+```powershell
+Invoke-RestMethod http://localhost:15526/
 ```
 
-**macOS:**
-```bash
-GAME_DIR="$HOME/Library/Application Support/Steam/steamapps/common/Slay the Spire 2"
-MODS_DIR="$GAME_DIR/SlayTheSpire2.app/Contents/MacOS/mods"
-mkdir -p "$MODS_DIR"
-cp STS2_MCP.dll "$MODS_DIR/"
-cp STS2_MCP.json "$MODS_DIR/"
-```
+Expect a response such as `Hello from STS2 MCP v0.4.0`. Match the mod build to the installed game build. Treat older examples that use `/api/v1/state` and `/api/v1/action` as obsolete unless the running server confirms them.
 
-Launch the game, enable mods in settings, and verify the server is running:
-
-```bash
-curl http://localhost:15526/
-# Expected: {"message": "Hello from STS2 MCP v0.3.4", "status": "ok"}
-```
-
-### 2. Set Up the MCP Server (for Claude Integration)
-
-Install [uv](https://docs.astral.sh/uv/) package manager:
-
-```bash
-# macOS
-brew install uv
-
-# Or use pip
-pip install uv
-```
-
-Clone the repository and test the server:
+Optional MCP server:
 
 ```bash
 git clone https://github.com/Gennadiyev/STS2MCP.git
@@ -75,445 +42,62 @@ cd STS2MCP
 uv run --directory mcp python server.py --help
 ```
 
-Add to your MCP configuration:
+Configure the client with an absolute `uv` path when GUI applications do not inherit the shell `PATH`.
 
-**Claude Code (`.mcp.json`):**
-```json
-{
-  "mcpServers": {
-    "sts2": {
-      "command": "uv",
-      "args": ["run", "--directory", "/absolute/path/to/STS2MCP/mcp", "python", "server.py"]
-    }
-  }
-}
-```
+## Core loop
 
-**Claude Desktop (`claude_desktop_config.json`):**
-```json
-{
-  "mcpServers": {
-    "sts2": {
-      "command": "/opt/homebrew/bin/uv",
-      "args": ["run", "--directory", "/absolute/path/to/STS2MCP/mcp", "python", "server.py"]
-    }
-  }
-}
-```
+1. Read `GET /api/v1/singleplayer?format=json`.
+2. Identify `state_type` and only issue an action valid for that state.
+3. Explain the objective reason for the decision in one concise update.
+4. POST one action to `/api/v1/singleplayer`.
+5. Wait for animation, repoll, and rebuild all indexes and entity IDs.
+6. Continue until the run history proves `win: true` or proves defeat.
 
-**Note:** On macOS GUI apps, use absolute path to `uv` (find with `which uv`).
+Do not batch decisions that depend on mutable hand, reward, shop, or selection indexes.
 
-Server options:
-```bash
-# Custom host/port
-uv run --directory mcp python server.py --host 127.0.0.1 --port 8080
+## Strategic priorities
 
-# Disable proxy environment variables
-uv run --directory mcp python server.py --no-trust-env
-```
+Use state-derived calculations, not generic card-tier assumptions:
 
-## REST API Reference
+1. Prevent lethal and permanent losses such as max-HP damage.
+2. Calculate incoming damage after block, multi-hit effects, weak, vulnerable, strength, plating, and relic limits.
+3. Check whether killing or disabling an attacker prevents more damage than blocking.
+4. Account for energy refunds, zero-cost follow-ups, X-cost modifiers, exhaust triggers, and generated cards.
+5. Develop scaling when the current turn is safe; otherwise solve the current turn.
+6. Route for expected survival value: rest sites, shops with enough gold or relevant relics, treasure, then manageable elites.
+7. Keep high-value potions for unavoidable spikes, elites, and bosses unless using one prevents permanent damage.
 
-Base URL: `http://localhost:15526`
+## Run completion
 
-### Core Endpoints
+Do not infer victory from `game_over.player.hp`; the API may normalize HP to zero after any ended run.
 
-#### Get Game State
-```bash
-GET /api/v1/state
-```
+Verify the newest entry at:
 
-Returns comprehensive game state including:
-- Current screen/room type
-- Player deck, relics, potions, gold, HP
-- Combat state (enemies, cards in hand, energy)
-- Map state and available paths
-- Rewards and choices
-
-Example response structure:
-```json
-{
-  "screen": "COMBAT",
-  "room_type": "ELITE",
-  "player": {
-    "hp": 68,
-    "max_hp": 80,
-    "gold": 142,
-    "deck": [...],
-    "relics": [...],
-    "potions": [...]
-  },
-  "combat": {
-    "turn": 3,
-    "energy": 3,
-    "hand": [...],
-    "enemies": [...]
-  }
-}
-```
-
-#### Execute Action
-```bash
-POST /api/v1/action
-Content-Type: application/json
-
-{
-  "action": "play_card",
-  "card_id": 123,
-  "target_index": 0
-}
-```
-
-Common actions:
-- `play_card`: Play a card (requires `card_id`, optional `target_index`)
-- `end_turn`: End combat turn
-- `use_potion`: Use a potion (requires `potion_index`, optional `target_index`)
-- `choose_option`: Make a choice (requires `option_index`)
-- `proceed`: Click proceed/continue button
-- `skip_card_reward`: Skip card reward screen
-- `take_card_reward`: Take a card (requires `card_index`)
-- `take_relic_reward`: Take a relic (requires `relic_index`)
-- `take_gold_reward`: Take gold
-- `upgrade_card`: Upgrade a card at rest site (requires `card_id`)
-- `rest`: Rest at campfire
-- `navigate_map`: Move on map (requires `node_index`)
-
-### Profile & Compendium
-
-#### Get Active Profile
-```bash
-GET /api/v1/profile
-```
-
-Returns profile progress: discoveries, achievements, character stats, run totals.
-
-#### Get Compendium Data
-```bash
-GET /api/v1/compendium
-```
-
-Returns organized compendium data: Card Library, Relic Collection, Potion Lab, Bestiary, Character Stats, Run History (last 20 runs).
-
-#### Search Wiki
-```bash
-GET /api/v1/wiki?query=strike&item_type=card&limit=5
-```
-
-Fuzzy search for discovered cards/relics. Parameters:
-- `query`: Search term (required)
-- `item_type`: Filter by `card` or `relic` (optional)
-- `limit`: Max results (default 10)
-
-#### List Profiles
-```bash
-GET /api/v1/profiles
-```
-
-#### Switch/Delete Profile
-```bash
-POST /api/v1/profiles
-Content-Type: application/json
-
-{
-  "action": "switch",
-  "profile_id": 2
-}
-
-# Or delete
-{
-  "action": "delete",
-  "profile_id": 1
-}
-```
-
-## MCP Server Functions
-
-When using the MCP server with Claude, the following tools are available:
-
-### Game State Functions
-
-```python
-# Get current game state
-get_game_state()
-
-# Execute action
-execute_action(action_data: dict)
-# Example: execute_action({"action": "play_card", "card_id": 42, "target_index": 1})
-```
-
-### Profile Functions
-
-```python
-# Get active profile data
-get_profile()
-
-# Get compendium (organized progress data)
-get_compendium()
-
-# Search wiki entries
-search_wiki(query: str, item_type: str = None, limit: int = 10)
-# Example: search_wiki("strike", item_type="card", limit=5)
-
-# List all profiles
-list_profiles()
-
-# Switch profile
-switch_profile(profile_id: int)
-
-# Delete profile
-delete_profile(profile_id: int)
-```
-
-## Building the Mod from Source
-
-Requires [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0).
-
-**Windows (PowerShell):**
 ```powershell
-# Set game directory
-$env:STS2_GAME_DIR = "D:\SteamLibrary\steamapps\common\Slay the Spire 2"
-.\build.ps1
+$c = Invoke-RestMethod http://localhost:15526/api/v1/compendium
+$c.sections.run_history.entries |
+  Sort-Object last_write_time_utc -Descending |
+  Select-Object -First 1
 ```
 
-**macOS/Linux:**
-```bash
-# Install .NET 9
-brew install dotnet@9  # macOS
-export DOTNET_ROOT="/opt/homebrew/opt/dotnet@9/libexec"
-export PATH="$DOTNET_ROOT:$PATH"
+Require `win: true`, `was_abandoned: false`, and no killing encounter/event before reporting a completed run.
 
-# Build
-dotnet build STS2_MCP.csproj -c Release -o out/STS2_MCP \
-  -p:STS2GameDir="$HOME/Library/Application Support/Steam/steamapps/common/Slay the Spire 2"
+## Commentary style
 
-# Install
-MODS_DIR="$HOME/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/MacOS/mods"
-mkdir -p "$MODS_DIR"
-cp out/STS2_MCP/STS2_MCP.dll "$MODS_DIR/"
-cp mod_manifest.json "$MODS_DIR/STS2_MCP.json"
-```
+- Lead with the game state and decision; add at most one fitting Tower-P line.
+- Use humor at meaningful moments: high-rolls, low-rolls, greedy purchases, suspiciously exact block, slow animations, boss windups, and SL retries.
+- Do not spam catchphrases, fake confidence, or let a joke hide HP, incoming damage, energy, targets, or route consequences.
+- Keep criticism directed at game situations and RNG, not at the user.
 
-## Common Usage Patterns
+## Safety and recovery
 
-### Basic Agent Loop (Python)
+- Poll at roughly 1 Hz or slower while waiting.
+- Treat a successful POST as queued input, not proof that the effect resolved.
+- If state does not advance, do not repeat actions blindly. Repoll and inspect `state_type`, `is_play_phase`, selection overlays, energy, and hand indexes.
+- For a reproducible API defect, preserve the run, record the exact state/action/response, and fix or update the mod rather than switching to screen control.
+- In multiplayer, use the multiplayer endpoint and assume beta-level synchronization risk.
 
-```python
-import requests
-import time
+## Upstream
 
-BASE_URL = "http://localhost:15526"
-
-def get_state():
-    response = requests.get(f"{BASE_URL}/api/v1/state")
-    return response.json()
-
-def execute_action(action_data):
-    response = requests.post(
-        f"{BASE_URL}/api/v1/action",
-        json=action_data,
-        headers={"Content-Type": "application/json"}
-    )
-    return response.json()
-
-def play_combat_turn(state):
-    """Example: Play all playable cards on first enemy"""
-    if state["screen"] != "COMBAT":
-        return
-    
-    combat = state["combat"]
-    hand = combat["hand"]
-    energy = combat["energy"]
-    
-    for card in hand:
-        if card["cost"] <= energy and card["playable"]:
-            execute_action({
-                "action": "play_card",
-                "card_id": card["id"],
-                "target_index": 0
-            })
-            time.sleep(0.5)  # Allow game to process
-            
-            # Refresh state
-            state = get_state()
-            energy = state["combat"]["energy"]
-    
-    # End turn when done
-    execute_action({"action": "end_turn"})
-
-# Main agent loop
-while True:
-    state = get_state()
-    
-    if state["screen"] == "COMBAT":
-        play_combat_turn(state)
-    elif state["screen"] == "CARD_REWARD":
-        # Skip card rewards for simplicity
-        execute_action({"action": "skip_card_reward"})
-    elif state["screen"] == "MAP":
-        # Take first available path
-        execute_action({"action": "navigate_map", "node_index": 0})
-    else:
-        # Try to proceed
-        execute_action({"action": "proceed"})
-    
-    time.sleep(1)
-```
-
-### Using MCP with Claude
-
-When Claude has the MCP server connected, you can give natural language instructions:
-
-```
-"Start a new run with Ironclad and play through the first combat"
-
-"Check my compendium and tell me which cards I've discovered"
-
-"Search for all strike cards in the wiki"
-
-"Look at the current game state and suggest the best card to play"
-```
-
-Claude will use the appropriate MCP tools to fulfill these requests.
-
-### Profile Management Example
-
-```python
-import requests
-
-BASE_URL = "http://localhost:15526"
-
-def switch_to_profile(profile_id):
-    """Switch to a specific profile"""
-    response = requests.post(
-        f"{BASE_URL}/api/v1/profiles",
-        json={"action": "switch", "profile_id": profile_id}
-    )
-    return response.json()
-
-def get_all_discovered_cards():
-    """Get all discovered cards from compendium"""
-    response = requests.get(f"{BASE_URL}/api/v1/compendium")
-    compendium = response.json()
-    return compendium.get("card_library", {}).get("discovered_cards", [])
-
-def search_for_card(card_name):
-    """Search wiki for specific card"""
-    response = requests.get(
-        f"{BASE_URL}/api/v1/wiki",
-        params={"query": card_name, "item_type": "card", "limit": 1}
-    )
-    return response.json()
-
-# Example usage
-switch_to_profile(1)
-cards = get_all_discovered_cards()
-print(f"Discovered {len(cards)} cards")
-
-strike_info = search_for_card("strike")
-print(f"Strike card info: {strike_info}")
-```
-
-### Combat Decision Making
-
-```python
-def choose_best_target(state):
-    """Example: Target enemy with lowest HP"""
-    enemies = state["combat"]["enemies"]
-    if not enemies:
-        return None
-    
-    # Find enemy with lowest HP
-    min_hp = float('inf')
-    target_idx = 0
-    
-    for idx, enemy in enumerate(enemies):
-        if enemy["hp"] < min_hp:
-            min_hp = enemy["hp"]
-            target_idx = idx
-    
-    return target_idx
-
-def play_damage_cards(state):
-    """Play damage-dealing cards on weakest enemy"""
-    hand = state["combat"]["hand"]
-    energy = state["combat"]["energy"]
-    target_idx = choose_best_target(state)
-    
-    if target_idx is None:
-        return
-    
-    for card in hand:
-        if card["cost"] <= energy and card["playable"]:
-            # Check if card deals damage (simplified)
-            if "damage" in card.get("description", "").lower():
-                execute_action({
-                    "action": "play_card",
-                    "card_id": card["id"],
-                    "target_index": target_idx
-                })
-                time.sleep(0.5)
-                state = get_state()
-                energy = state["combat"]["energy"]
-```
-
-## Troubleshooting
-
-### Mod Not Loading
-
-1. **Check mod files**: Ensure `STS2_MCP.dll` and `STS2_MCP.json` are in the correct mods directory
-2. **Enable mods**: Go to Settings → Mods in-game and enable mod support
-3. **Check consent dialog**: Accept the mod consent dialog on first launch
-4. **Verify server**: Run `curl http://localhost:15526/` to check if server is running
-
-### Connection Refused
-
-```bash
-# Test if game is running and mod is loaded
-curl http://localhost:15526/
-
-# If failed, check game logs for errors
-# Windows: <game_install>/logs/
-# macOS: ~/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/MacOS/logs/
-```
-
-### MCP Server Not Starting
-
-1. **Check uv installation**: `uv --version`
-2. **Use absolute paths**: GUI apps may not inherit shell PATH
-3. **Test server manually**: `uv run --directory /path/to/STS2MCP/mcp python server.py`
-4. **Check logs**: Claude Desktop logs are in `~/Library/Logs/Claude/` (macOS) or `%APPDATA%/Claude/logs/` (Windows)
-
-### Actions Not Working
-
-- **Wait between actions**: Add 0.5-1s delays to allow game to process
-- **Verify game state**: Always refresh state after executing actions
-- **Check action validity**: Ensure the action is valid for current screen (e.g., can't play cards outside combat)
-- **Check IDs**: Card/potion IDs are instance-specific, refresh state to get current IDs
-
-### Proxy Issues
-
-If running in a containerized environment with proxy settings:
-
-```bash
-# Disable proxy for MCP server
-uv run --directory mcp python server.py --no-trust-env
-```
-
-### Multiplayer Issues
-
-Multiplayer support is in beta. If you encounter issues:
-
-1. Disable the mod and verify issue persists
-2. Report bugs only if they occur with mod disabled
-3. Check that multiplayer actions are properly sequenced (host first, then client)
-
-## Performance Notes
-
-- **Token Usage**: A full Ironclad run with Claude Sonnet uses ~8M tokens (input + output + tool responses)
-- **API Latency**: Local API calls are <10ms, but game animation/processing adds 200-500ms per action
-- **Rate Limiting**: No built-in rate limiting, but game needs time to process actions
-- **State Refresh**: Poll game state at 1Hz or less to avoid overwhelming the game
-
-## License
-
-MIT License - See repository for full text.
+- Mod and server: [Gennadiyev/STS2MCP](https://github.com/Gennadiyev/STS2MCP)
+- Original skill source: [Aradotso/mcp-skills](https://github.com/Aradotso/mcp-skills/tree/main/skills/sts2mcp-slay-the-spire-2-ai-agent)
