@@ -17,7 +17,8 @@ Control the game through structured state and actions. Optimize for completing t
 - Use only STS2MCP REST/MCP actions for gameplay input.
 - Do not use Computer Use, screenshots, coordinate clicks, keyboard injection, or other direct screen control while playing.
 - If the API cannot complete a selection, wait, repoll, retry once, then use the documented save/load recovery or report the compatibility bug. Never work around it by clicking the game window.
-- OS process lifecycle commands are allowed only for the documented save/load retry and only when the user has authorized SL or repeated retries.
+- SL may be used proactively for pivotal branch exploration, run-saving retries, or gameplay entertainment unless the user explicitly forbids it. Label the checkpoint and branch purpose before restarting; per-retry authorization is not required.
+- OS process lifecycle commands are allowed only for the documented checkpoint-safe save/load procedure. Resolve and verify the exact game process before closing or terminating it.
 - Never edit run-save files to manufacture an outcome.
 
 ## Installation
@@ -85,7 +86,8 @@ Require `win: true`, `was_abandoned: false`, and no killing encounter/event befo
 ## Commentary style
 
 - Keep chain-of-thought and step-by-step deliberation private. Report only the minimum state fact needed to understand the action or result.
-- Make Tower-P language the default Chinese gameplay voice: ordinarily use one or two contextual constructions, and use two or three at pivotal or especially comic moments.
+- Make Tower-P language the default Chinese gameplay voice. Keep conventional explanatory prose to at most roughly half of visible Chinese commentary: pair each decision-critical factual clause with a contextual Tower-P construction, using about two constructions in an ordinary update and three or four at pivotal or especially comic moments.
+- Do not default to a solemn neutral analyst voice. Make the performance pointed, darkly comic, and self-deprecating: taunt enemies, cards, relics, RNG, and the agent's own bad line; turn confirmed failure or death into a compact post-mortem; let reversals puncture earlier confidence. Never aim aggression at the user or real people.
 - Prefer elastic danmaku patterns, callbacks, rhetorical questions, personification, and altered repetitions over repeatedly quoting one fixed catchphrase.
 - Use humor throughout the run, not only at rare highlights. Quiet polling and unresolved API waits may stay factual and brief.
 - Never let the performance hide lethal risk, HP loss, incoming damage, block, energy, target, potion timing, route consequences, or whether a kill/result is actually confirmed.

@@ -95,21 +95,38 @@ Do not open the purchase screen first: that screen removes the merchant target n
 - Post-run `game_over.player.hp == 0` does not prove death. The newest run-history entry is authoritative.
 - `compendium.current_run.is_in_progress` can lag immediately after the ending; prefer `sections.run_history.entries`.
 
+## Boss and combat lessons from an A10 Ironclad run
+
+- Experimental Subject has multiple forms. A lethal can temporarily leave `battle.enemies` empty while combat remains active. Do not report victory or send attacks into the empty state. Self-targeted healing can still resolve in this window; then `end_turn` advances the revival.
+- Its first form can gain strength whenever a Skill is played. Prefer attack-only turns when they solve the incoming damage, and use Neow's Fury after playing zero-cost Strikes so those Strikes can be selected from the discard pile and replayed.
+- Its second form escalates from `11x3` upward and adds a Wound for each attack instance that deals unblocked damage. Full block has extra value because it prevents both HP loss and draw-pile pollution. Tungsten Rod applies to each unblocked hit; if only 1 damage remains after block, it reduces that hit to 0 and prevents the Wound trigger.
+- Trigger an exhaust effect before Evil Eye when possible. Evil Eye then grants both block segments; with Unmovable, let Evil Eye or the strongest replaying block card take the first-block doubling.
+- A replaying upgraded Defend can show only its current segment. With Dexterity and Unmovable, an observed `20 block, Replay 1` resolved as 30 total: 20 for the doubled first segment plus 10 for the replay. Repoll the actual block total instead of multiplying the preview twice.
+- Its final form alternates Intangible windows with vulnerable damage windows and can inject five Status cards at once. On Intangible turns, avoid expensive self-damaging attacks for 1 damage; prioritize defense, scaling, draw setup, and exhausting Status cards. Preserve enough block, draw, or an emergency potion for the post-Status hand because five Wounds can create a forced lethal even from a healthy-looking HP total.
+- Plan HP across all forms rather than one bar. A potion spent to survive form two may still leave no answer to the final form, so compare the immediate prevention value with the known next-form spike before consuming it.
+
 ## Save/load timeline technique
 
-Use SL only when the user has authorized it. Treat it as controlled branch exploration, not as save-file editing.
+Use SL proactively when a pivotal branch is lost, a different RNG-consuming order may materially improve the run, an API defect requires recovery, or a retry adds useful gameplay entertainment. Per-use user authorization is not required unless the user has explicitly prohibited SL. Treat it as controlled branch exploration, not as save-file editing, and announce the checkpoint and objective before restarting.
 
 Slay the Spire 2 automatically checkpoints at the beginning of combats and events. Exploit that boundary as follows:
 
 1. At the untouched combat/event start, wait for saving to finish and record floor, room/event ID, HP, deck/relic state, enemies/options, hand, and intents.
 2. Try one clearly labeled branch and record its actions and outcome.
 3. To reject the branch, exit before entering another room or creating a later checkpoint. Do not choose the next map node.
-4. Prefer a graceful window close through the OS process API. Wait until `http://localhost:15526/` is unreachable before relaunching.
-5. Relaunch the same installed game executable or Steam app, wait for the REST server, then use `menu_select` with `option: "continue"`.
+4. Prefer a graceful window close through the OS process API. Verify the exact game PID and executable path, request a normal window close, and wait until both the process and `http://localhost:15526/` are gone before relaunching.
+5. Relaunch through the same Steam context that started the working modded process, wait for the REST server, then use `menu_select` with `option: "continue"`. Prefer Steam's `-applaunch APP_ID` when a direct executable launch cannot initialize Steamworks.
 6. Verify that floor, room/event, HP, enemies/options, and initial hand match the recorded checkpoint before trying another branch.
 7. Stop retrying when the improvement is negligible, the same deterministic result repeats, or restart stability degrades.
 
-Do not force-kill while a save icon, reward transition, or room transition is active. Use forced process termination only after graceful close fails and the user's SL authorization explicitly covers forced restarts.
+Do not force-kill while a save icon, reward transition, or room transition is active. Use forced process termination only after graceful close fails, the exact game PID and path have been verified, and the current state is a known checkpoint-safe SL boundary.
+
+### Relaunch diagnosis
+
+- Record the working process path, parent process, and command line before the first restart. A visible, responsive game process does not prove that Steamworks or the mod loaded; the REST endpoint is authoritative.
+- If the log reports `No appID found`, close that failed direct-launch process before asking Steam to launch the app. Otherwise Steam may treat the broken process as the already-running game and ignore the new request.
+- Discover the Steam AppID from `appmanifest_*.acf` and the Steam client path from the local Steam configuration. Launch with `steam.exe -applaunch APP_ID`, then poll the REST root. Do not hardcode machine-specific paths in reusable automation.
+- If the process survives but the REST server never appears, inspect the newest game log for Steam initialization and mod-loading lines before retrying. Do not interact with an error popup through mouse or keyboard automation.
 
 ### Changing the timeline
 
