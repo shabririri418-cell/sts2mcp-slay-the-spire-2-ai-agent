@@ -7,8 +7,8 @@ Read this file completely before controlling a run.
 Base URL: `http://localhost:15526`
 
 ```text
-GET  /api/v1/singleplayer?format=json
-POST /api/v1/singleplayer
+GET  /api/v1/singleplayer?format=json&view=decision
+POST /api/v1/singleplayer?wait=ready&view=decision&timeout_ms=20000
 GET  /api/v1/profile
 GET  /api/v1/compendium
 GET  /api/v1/wiki?query=...
@@ -16,7 +16,9 @@ GET  /api/v1/profiles
 POST /api/v1/profiles
 ```
 
-The running `v0.4.0` server uses the same `/singleplayer` endpoint for state and actions. Refresh state after every action because card, reward, selection, and shop indexes are positional and change immediately.
+The running `v0.5.0` server uses the same `/singleplayer` endpoint for state and actions. Prefer the compact `view=decision` state. Waited POST returns the post-action state, so rebuild card, reward, selection, shop indexes, and entity IDs from that response. Use a separate GET only for initial inspection, recovery, or when `settled` is false.
+
+Waited POST responses include `action_id`, `settled`, `wait_ms`, `poll_count`, and `state`. State responses include `state_revision`, `actions_enabled`, and `action_state`. A successful raw POST still means only that input was queued; a waited POST with `settled: true` confirms that the returned state is ready for the next decision.
 
 ## Common actions
 
@@ -45,13 +47,14 @@ Use `target` only when the card or potion requires an enemy. Use the current `en
 
 ## Timing and turn-lock rules
 
-- Wait `900-1500 ms` after ordinary cards and choices.
-- Wait `5-6 s` after `end_turn`, combat-ending attacks, Whirlwind, Fiend Fire, or multi-step exhaust effects.
-- Wait `10-15 s` for shop-wide automatic acquisition and relic-triggered selections.
+- Prefer MCP `step` or waited POST. Its internal polling starts at `75 ms`, backs off to `150 ms`, then `300 ms`, and returns as soon as a changed state is stable and actionable.
+- Use `timeout_ms=20000` normally and at most `30000` for shop-wide automatic acquisition or long relic-triggered selections.
+- Do not add a fixed sleep or a redundant GET after a waited response with `settled: true`.
+- If only the legacy v0.4.0 API is available, wait `900-1500 ms` after ordinary actions, `5-6 s` after turn/combat-ending or multi-step effects, and `10-15 s` for shop-wide acquisition.
 - Before ending a turn, require `battle.turn == "player"`, `battle.is_play_phase == true`, and an ordinary combat state rather than a selection overlay.
-- If the server reports `PlayerActionsDisabled`, a card is still resolving. Wait and repoll; do not send another `end_turn`.
+- Require `actions_enabled: true`. If `action_state.player_actions_disabled` or `action_state.hand_busy` is true, wait and repoll; do not send another action.
 
-The previous turn-lock failure came from ending turns while a card animation or selection mode still owned the hand. Timing plus state gating prevents it.
+The previous turn-lock failure came from ending turns while a card animation or selection mode still owned the hand. State-driven settlement and action gating prevent it without paying the worst-case delay on every action.
 
 ## Selection-state matrix
 
