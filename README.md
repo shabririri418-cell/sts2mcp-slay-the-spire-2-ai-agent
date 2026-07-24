@@ -1,160 +1,46 @@
-# MCP Skills
+# STS2MCP Slay the Spire 2 AI Agent
 
-Auto-generated agent skills from the fastest-growing **Model Context Protocol** open source projects on GitHub, by [ara.so](https://ara.so).
+A single-purpose Codex skill for controlling, troubleshooting, and narrating
+Slay the Spire 2 through [STS2MCP](https://github.com/Gennadiyev/STS2MCP).
 
-A bot scans GitHub every 30 minutes for trending repos in the Model Context Protocol niche, ranks them by stars/day, and writes an installable `SKILL.md` for the top new one.
+## Capabilities
 
-## Install all skills
+- Control single-player and multiplayer runs through the STS2MCP REST API or MCP server.
+- Make version-aware combat, deck-building, routing, shop, event, and rest-site decisions.
+- Use checkpoint-safe save/load recovery for pivotal branches and compatibility failures.
+- Verify completed runs from run history instead of inferring victory from the final screen.
+- Provide optional Chinese Tower-P commentary and license-gated local Mambo narration.
+
+## Install
+
+Install only this skill with the Skills CLI:
 
 ```bash
-npx skills add Aradotso/mcp-skills
+npx skills add shabririri418-cell/sts2mcp-slay-the-spire-2-ai-agent --skill sts2mcp-slay-the-spire-2-ai-agent
 ```
 
-## Install a specific skill
+Or copy
+`skills/sts2mcp-slay-the-spire-2-ai-agent`
+into your Codex skills directory.
 
-```bash
-npx skills add Aradotso/mcp-skills --skill <skill-name>
+The STS2MCP game mod is installed separately. Follow the installation section in
+[SKILL.md](skills/sts2mcp-slay-the-spire-2-ai-agent/SKILL.md).
+
+## Repository layout
+
+```text
+skills/sts2mcp-slay-the-spire-2-ai-agent/
+├── SKILL.md
+├── references/
+├── scripts/
+├── tests/
+└── .gitignore
 ```
 
-## Skills Index
+The repository intentionally contains no unrelated skills and no workflow that
+automatically generates new skills.
 
-| Skill | skills.sh | Source | Date |
-|-------|-----------|--------|------|
-| [chrome-devtools-mcp-automation](skills/chrome-devtools-mcp-automation/) | [install](https://skills.sh/aradotso/mcp-skills/chrome-devtools-mcp-automation) | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | 2026-05-16 |
-| [playwright-mcp-server](skills/playwright-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/playwright-mcp-server) | [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp) | 2026-05-16 |
-| [github-mcp-server](skills/github-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/github-mcp-server) | [github/github-mcp-server](https://github.com/github/github-mcp-server) | 2026-05-16 |
-| [n8n-mcp-workflow-builder](skills/n8n-mcp-workflow-builder/) | [install](https://skills.sh/aradotso/mcp-skills/n8n-mcp-workflow-builder) | [czlonkowski/n8n-mcp](https://github.com/czlonkowski/n8n-mcp) | 2026-05-16 |
-| [tradingview-mcp-assistant](skills/tradingview-mcp-assistant/) | [install](https://skills.sh/aradotso/mcp-skills/tradingview-mcp-assistant) | [tradesdontlie/tradingview-mcp](https://github.com/tradesdontlie/tradingview-mcp) | 2026-05-16 |
-| [xiaohongshu-mcp-integration](skills/xiaohongshu-mcp-integration/) | [install](https://skills.sh/aradotso/mcp-skills/xiaohongshu-mcp-integration) | [xpzouying/xiaohongshu-mcp](https://github.com/xpzouying/xiaohongshu-mcp) | 2026-05-16 |
-| [excalidraw-mcp-server](skills/excalidraw-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/excalidraw-mcp-server) | [excalidraw/excalidraw-mcp](https://github.com/excalidraw/excalidraw-mcp) | 2026-05-16 |
-| [claude-peers-mcp-inter-instance-messaging](skills/claude-peers-mcp-inter-instance-messaging/) | [install](https://skills.sh/aradotso/mcp-skills/claude-peers-mcp-inter-instance-messaging) | [louislva/claude-peers-mcp](https://github.com/louislva/claude-peers-mcp) | 2026-05-16 |
-| [pal-mcp-server-multi-model-orchestration](skills/pal-mcp-server-multi-model-orchestration/) | [install](https://skills.sh/aradotso/mcp-skills/pal-mcp-server-multi-model-orchestration) | [BeehiveInnovations/pal-mcp-server](https://github.com/BeehiveInnovations/pal-mcp-server) | 2026-05-16 |
-| [mcp2cli-api-to-cli](skills/mcp2cli-api-to-cli/) | [install](https://skills.sh/aradotso/mcp-skills/mcp2cli-api-to-cli) | [knowsuchagency/mcp2cli](https://github.com/knowsuchagency/mcp2cli) | 2026-05-16 |
-| [mcp-brasil-server](skills/mcp-brasil-server/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-brasil-server) | [Mcp-Brasil/mcp-brasil](https://github.com/Mcp-Brasil/mcp-brasil) | 2026-05-16 |
-| [codebase-memory-mcp-intelligence](skills/codebase-memory-mcp-intelligence/) | [install](https://skills.sh/aradotso/mcp-skills/codebase-memory-mcp-intelligence) | [DeusData/codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) | 2026-05-16 |
-| [google-meta-ads-ga4-mcp](skills/google-meta-ads-ga4-mcp/) | [install](https://skills.sh/aradotso/mcp-skills/google-meta-ads-ga4-mcp) | [irinabuht12-oss/google-meta-ads-ga4-mcp](https://github.com/irinabuht12-oss/google-meta-ads-ga4-mcp) | 2026-05-16 |
-| [jcodemunch-mcp-code-retrieval](skills/jcodemunch-mcp-code-retrieval/) | [install](https://skills.sh/aradotso/mcp-skills/jcodemunch-mcp-code-retrieval) | [jgravelle/jcodemunch-mcp](https://github.com/jgravelle/jcodemunch-mcp) | 2026-05-16 |
-| [cve-mcp-server-security-intelligence](skills/cve-mcp-server-security-intelligence/) | [install](https://skills.sh/aradotso/mcp-skills/cve-mcp-server-security-intelligence) | [mukul975/cve-mcp-server](https://github.com/mukul975/cve-mcp-server) | 2026-05-16 |
-| [figma-mcp-go](skills/figma-mcp-go/) | [install](https://skills.sh/aradotso/mcp-skills/figma-mcp-go) | [vkhanhqui/figma-mcp-go](https://github.com/vkhanhqui/figma-mcp-go) | 2026-05-16 |
-| [opennews-mcp-news-aggregation](skills/opennews-mcp-news-aggregation/) | [install](https://skills.sh/aradotso/mcp-skills/opennews-mcp-news-aggregation) | [6551Team/opennews-mcp](https://github.com/6551Team/opennews-mcp) | 2026-05-16 |
-| [anysearch-mcp-server](skills/anysearch-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/anysearch-mcp-server) | [anysearch-ai/anysearch-mcp-server](https://github.com/anysearch-ai/anysearch-mcp-server) | 2026-05-16 |
-| [ableton-live-mcp-control](skills/ableton-live-mcp-control/) | [install](https://skills.sh/aradotso/mcp-skills/ableton-live-mcp-control) | [bschoepke/ableton-live-mcp](https://github.com/bschoepke/ableton-live-mcp) | 2026-05-16 |
-| [iida-mcp-ida-integration](skills/iida-mcp-ida-integration/) | [install](https://skills.sh/aradotso/mcp-skills/iida-mcp-ida-integration) | [saileaxh/iida-mcp](https://github.com/saileaxh/iida-mcp) | 2026-05-16 |
-| [iai-mcp-memory-server](skills/iai-mcp-memory-server/) | [install](https://skills.sh/aradotso/mcp-skills/iai-mcp-memory-server) | [CodeAbra/iai-mcp](https://github.com/CodeAbra/iai-mcp) | 2026-05-16 |
-| [korean-law-mcp](skills/korean-law-mcp/) | [install](https://skills.sh/aradotso/mcp-skills/korean-law-mcp) | [chrisryugj/korean-law-mcp](https://github.com/chrisryugj/korean-law-mcp) | 2026-05-17 |
-| [meigen-ai-design-mcp](skills/meigen-ai-design-mcp/) | [install](https://skills.sh/aradotso/mcp-skills/meigen-ai-design-mcp) | [jau123/MeiGen-AI-Design-MCP](https://github.com/jau123/MeiGen-AI-Design-MCP) | 2026-05-17 |
-| [opentwitter-mcp-server](skills/opentwitter-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/opentwitter-mcp-server) | [6551Team/opentwitter-mcp](https://github.com/6551Team/opentwitter-mcp) | 2026-05-17 |
-| [google-surf-mcp-search](skills/google-surf-mcp-search/) | [install](https://skills.sh/aradotso/mcp-skills/google-surf-mcp-search) | [HarimxChoi/google-surf-mcp](https://github.com/HarimxChoi/google-surf-mcp) | 2026-05-17 |
-| [lanhu-mcp-collaboration](skills/lanhu-mcp-collaboration/) | [install](https://skills.sh/aradotso/mcp-skills/lanhu-mcp-collaboration) | [dsphper/lanhu-mcp](https://github.com/dsphper/lanhu-mcp) | 2026-05-17 |
-| [kagi-session2api-mcp-server](skills/kagi-session2api-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/kagi-session2api-mcp-server) | [KSroido/Kagi-Session2API-MCP](https://github.com/KSroido/Kagi-Session2API-MCP) | 2026-05-17 |
-| [ida-no-mcp-decompiler-exporter](skills/ida-no-mcp-decompiler-exporter/) | [install](https://skills.sh/aradotso/mcp-skills/ida-no-mcp-decompiler-exporter) | [P4nda0s/IDA-NO-MCP](https://github.com/P4nda0s/IDA-NO-MCP) | 2026-05-17 |
-| [cdp-bridge-mcp-browser-control](skills/cdp-bridge-mcp-browser-control/) | [install](https://skills.sh/aradotso/mcp-skills/cdp-bridge-mcp-browser-control) | [Unagi-cq/cdp-bridge-mcp](https://github.com/Unagi-cq/cdp-bridge-mcp) | 2026-05-17 |
-| [datagouv-mcp-server](skills/datagouv-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/datagouv-mcp-server) | [datagouv/datagouv-mcp](https://github.com/datagouv/datagouv-mcp) | 2026-05-17 |
-| [idea-reality-mcp-validation](skills/idea-reality-mcp-validation/) | [install](https://skills.sh/aradotso/mcp-skills/idea-reality-mcp-validation) | [mnemox-ai/idea-reality-mcp](https://github.com/mnemox-ai/idea-reality-mcp) | 2026-05-17 |
-| [mcp-cli-tool](skills/mcp-cli-tool/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-cli-tool) | [philschmid/mcp-cli](https://github.com/philschmid/mcp-cli) | 2026-05-17 |
-| [godot-mcp-native](skills/godot-mcp-native/) | [install](https://skills.sh/aradotso/mcp-skills/godot-mcp-native) | [yurineko73/Godot-MCP-Native](https://github.com/yurineko73/Godot-MCP-Native) | 2026-05-17 |
-| [jsreverser-mcp-javascript-reverse-engineering](skills/jsreverser-mcp-javascript-reverse-engineering/) | [install](https://skills.sh/aradotso/mcp-skills/jsreverser-mcp-javascript-reverse-engineering) | [NoOne-hub/JSReverser-MCP](https://github.com/NoOne-hub/JSReverser-MCP) | 2026-05-17 |
-| [stitch-mcp-cli](skills/stitch-mcp-cli/) | [install](https://skills.sh/aradotso/mcp-skills/stitch-mcp-cli) | [davideast/stitch-mcp](https://github.com/davideast/stitch-mcp) | 2026-05-17 |
-| [modular-rag-mcp-server](skills/modular-rag-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/modular-rag-mcp-server) | [jerry-ai-dev/MODULAR-RAG-MCP-SERVER](https://github.com/jerry-ai-dev/MODULAR-RAG-MCP-SERVER) | 2026-05-17 |
-| [js-reverse-mcp-debugging](skills/js-reverse-mcp-debugging/) | [install](https://skills.sh/aradotso/mcp-skills/js-reverse-mcp-debugging) | [zhizhuodemao/js-reverse-mcp](https://github.com/zhizhuodemao/js-reverse-mcp) | 2026-05-17 |
-| [universal-db-mcp-connector](skills/universal-db-mcp-connector/) | [install](https://skills.sh/aradotso/mcp-skills/universal-db-mcp-connector) | [Anarkh-Lee/universal-db-mcp](https://github.com/Anarkh-Lee/universal-db-mcp) | 2026-05-17 |
-| [homeassistant-mcp-server](skills/homeassistant-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/homeassistant-mcp-server) | [robbrad/homeassistant-mcp](https://github.com/robbrad/homeassistant-mcp) | 2026-05-17 |
-| [awesome-mcp-servers-discovery](skills/awesome-mcp-servers-discovery/) | [install](https://skills.sh/aradotso/mcp-skills/awesome-mcp-servers-discovery) | [YuzeHao2023/Awesome-MCP-Servers](https://github.com/YuzeHao2023/Awesome-MCP-Servers) | 2026-05-17 |
-| [figma-mcp-server](skills/figma-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/figma-mcp-server) | [figma/mcp-server-guide](https://github.com/figma/mcp-server-guide) | 2026-05-17 |
-| [pi-mcp-adapter](skills/pi-mcp-adapter/) | [install](https://skills.sh/aradotso/mcp-skills/pi-mcp-adapter) | [nicobailon/pi-mcp-adapter](https://github.com/nicobailon/pi-mcp-adapter) | 2026-05-17 |
-| [cheatengine-mcp-automation](skills/cheatengine-mcp-automation/) | [install](https://skills.sh/aradotso/mcp-skills/cheatengine-mcp-automation) | [miscusi-peek/cheatengine-mcp-bridge](https://github.com/miscusi-peek/cheatengine-mcp-bridge) | 2026-05-17 |
-| [blueprint-mcp-diagram-generation](skills/blueprint-mcp-diagram-generation/) | [install](https://skills.sh/aradotso/mcp-skills/blueprint-mcp-diagram-generation) | [ArcadeAI/blueprint-mcp](https://github.com/ArcadeAI/blueprint-mcp) | 2026-05-17 |
-| [cocos-creator-mcp-server](skills/cocos-creator-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/cocos-creator-mcp-server) | [DaxianLee/cocos-mcp-server](https://github.com/DaxianLee/cocos-mcp-server) | 2026-05-17 |
-| [mcpc-mcp-client](skills/mcpc-mcp-client/) | [install](https://skills.sh/aradotso/mcp-skills/mcpc-mcp-client) | [apify/mcpc](https://github.com/apify/mcpc) | 2026-05-17 |
-| [sap-ai-mcp-servers-registry](skills/sap-ai-mcp-servers-registry/) | [install](https://skills.sh/aradotso/mcp-skills/sap-ai-mcp-servers-registry) | [marianfoo/sap-ai-mcp-servers](https://github.com/marianfoo/sap-ai-mcp-servers) | 2026-05-17 |
-| [matlab-mcp-core-server](skills/matlab-mcp-core-server/) | [install](https://skills.sh/aradotso/mcp-skills/matlab-mcp-core-server) | [matlab/matlab-mcp-core-server](https://github.com/matlab/matlab-mcp-core-server) | 2026-05-17 |
-| [kindly-web-search-mcp-server](skills/kindly-web-search-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/kindly-web-search-mcp-server) | [Shelpuk-AI-Technology-Consulting/kindly-web-search-mcp-server](https://github.com/Shelpuk-AI-Technology-Consulting/kindly-web-search-mcp-server) | 2026-05-17 |
-| [alpaca-trading-mcp-server](skills/alpaca-trading-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/alpaca-trading-mcp-server) | [alpacahq/alpaca-mcp-server](https://github.com/alpacahq/alpaca-mcp-server) | 2026-05-17 |
-| [alpaca-mcp-server-trading](skills/alpaca-mcp-server-trading/) | [install](https://skills.sh/aradotso/mcp-skills/alpaca-mcp-server-trading) | [alpacahq/alpaca-mcp-server](https://github.com/alpacahq/alpaca-mcp-server) | 2026-05-17 |
-| [atlassian-mcp-server](skills/atlassian-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/atlassian-mcp-server) | [atlassian/atlassian-mcp-server](https://github.com/atlassian/atlassian-mcp-server) | 2026-05-17 |
-| [polymarket-mcp-server](skills/polymarket-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/polymarket-mcp-server) | [caiovicentino/polymarket-mcp-server](https://github.com/caiovicentino/polymarket-mcp-server) | 2026-05-18 |
-| [douyin-video-extractor](skills/douyin-video-extractor/) | [install](https://skills.sh/aradotso/mcp-skills/douyin-video-extractor) | [yzfly/douyin-mcp-server](https://github.com/yzfly/douyin-mcp-server) | 2026-05-18 |
-| [anki-mcp-server-integration](skills/anki-mcp-server-integration/) | [install](https://skills.sh/aradotso/mcp-skills/anki-mcp-server-integration) | [ankimcp/anki-mcp-server](https://github.com/ankimcp/anki-mcp-server) | 2026-05-18 |
-| [vulnerable-mcp-servers-lab](skills/vulnerable-mcp-servers-lab/) | [install](https://skills.sh/aradotso/mcp-skills/vulnerable-mcp-servers-lab) | [appsecco/vulnerable-mcp-servers-lab](https://github.com/appsecco/vulnerable-mcp-servers-lab) | 2026-05-18 |
-| [mcp-code-execution-mode](skills/mcp-code-execution-mode/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-code-execution-mode) | [elusznik/mcp-server-code-execution-mode](https://github.com/elusznik/mcp-server-code-execution-mode) | 2026-05-18 |
-| [mcp-server-spec-driven-development](skills/mcp-server-spec-driven-development/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-server-spec-driven-development) | [formulahendry/mcp-server-spec-driven-development](https://github.com/formulahendry/mcp-server-spec-driven-development) | 2026-05-18 |
-| [mcp-server-bash-sdk](skills/mcp-server-bash-sdk/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-server-bash-sdk) | [muthuishere/mcp-server-bash-sdk](https://github.com/muthuishere/mcp-server-bash-sdk) | 2026-05-18 |
-| [linux-mcp-server-administration](skills/linux-mcp-server-administration/) | [install](https://skills.sh/aradotso/mcp-skills/linux-mcp-server-administration) | [rhel-lightspeed/linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server) | 2026-05-18 |
-| [codex-mcp-server-integration](skills/codex-mcp-server-integration/) | [install](https://skills.sh/aradotso/mcp-skills/codex-mcp-server-integration) | [tuannvm/codex-mcp-server](https://github.com/tuannvm/codex-mcp-server) | 2026-05-18 |
-| [nanobanana-mcp-image-generation](skills/nanobanana-mcp-image-generation/) | [install](https://skills.sh/aradotso/mcp-skills/nanobanana-mcp-image-generation) | [zhongweili/nanobanana-mcp-server](https://github.com/zhongweili/nanobanana-mcp-server) | 2026-05-18 |
-| [data-go-mcp-servers](skills/data-go-mcp-servers/) | [install](https://skills.sh/aradotso/mcp-skills/data-go-mcp-servers) | [Koomook/data-go-mcp-servers](https://github.com/Koomook/data-go-mcp-servers) | 2026-05-18 |
-| [mcp-documentation-server](skills/mcp-documentation-server/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-documentation-server) | [andrea9293/mcp-documentation-server](https://github.com/andrea9293/mcp-documentation-server) | 2026-05-18 |
-| [remote-mcp-server-with-auth](skills/remote-mcp-server-with-auth/) | [install](https://skills.sh/aradotso/mcp-skills/remote-mcp-server-with-auth) | [coleam00/remote-mcp-server-with-auth](https://github.com/coleam00/remote-mcp-server-with-auth) | 2026-05-18 |
-| [mcp-server-12306](skills/mcp-server-12306/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-server-12306) | [drfccv/mcp-server-12306](https://github.com/drfccv/mcp-server-12306) | 2026-05-18 |
-| [postman-mcp-server](skills/postman-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/postman-mcp-server) | [postmanlabs/postman-mcp-server](https://github.com/postmanlabs/postman-mcp-server) | 2026-05-18 |
-| [quickbooks-online-mcp-server](skills/quickbooks-online-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/quickbooks-online-mcp-server) | [intuit/quickbooks-online-mcp-server](https://github.com/intuit/quickbooks-online-mcp-server) | 2026-05-20 |
-| [mcp-security-hub](skills/mcp-security-hub/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-security-hub) | [FuzzingLabs/mcp-security-hub](https://github.com/FuzzingLabs/mcp-security-hub) | 2026-05-24 |
-| [monarch-money-mcp-server](skills/monarch-money-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/monarch-money-mcp-server) | [robcerda/monarch-mcp-server](https://github.com/robcerda/monarch-mcp-server) | 2026-05-24 |
-| [ktx-data-agent-context-layer](skills/ktx-data-agent-context-layer/) | [install](https://skills.sh/aradotso/mcp-skills/ktx-data-agent-context-layer) | [Kaelio/ktx-ai-data-agents-mcp-context-skills](https://github.com/Kaelio/ktx-ai-data-agents-mcp-context-skills) | 2026-05-29 |
-| [ktx-ai-data-agents-context-layer](skills/ktx-ai-data-agents-context-layer/) | [install](https://skills.sh/aradotso/mcp-skills/ktx-ai-data-agents-context-layer) | [Kaelio/ktx-ai-data-agents-mcp-context-skills](https://github.com/Kaelio/ktx-ai-data-agents-mcp-context-skills) | 2026-05-29 |
-| [ktx-ai-data-context-layer](skills/ktx-ai-data-context-layer/) | [install](https://skills.sh/aradotso/mcp-skills/ktx-ai-data-context-layer) | [Kaelio/ktx-ai-data-agents-mcp-context-skills](https://github.com/Kaelio/ktx-ai-data-agents-mcp-context-skills) | 2026-05-30 |
-| [ktx-context-layer-data-agents](skills/ktx-context-layer-data-agents/) | [install](https://skills.sh/aradotso/mcp-skills/ktx-context-layer-data-agents) | [Kaelio/ktx-ai-data-agents-mcp-context-skills](https://github.com/Kaelio/ktx-ai-data-agents-mcp-context-skills) | 2026-05-30 |
-| [tauri-mcp-server-development](skills/tauri-mcp-server-development/) | [install](https://skills.sh/aradotso/mcp-skills/tauri-mcp-server-development) | [hypothesi/mcp-server-tauri](https://github.com/hypothesi/mcp-server-tauri) | 2026-06-01 |
-| [office-oxide-mcp-rust-document-processor](skills/office-oxide-mcp-rust-document-processor/) | [install](https://skills.sh/aradotso/mcp-skills/office-oxide-mcp-rust-document-processor) | [Aimino-Tech/opendocswork-mcp](https://github.com/Aimino-Tech/opendocswork-mcp) | 2026-06-02 |
-| [office-oxide-mcp-server](skills/office-oxide-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/office-oxide-mcp-server) | [Aimino-Tech/opendocswork-mcp](https://github.com/Aimino-Tech/opendocswork-mcp) | 2026-06-02 |
-| [opendocswork-mcp-office-processing](skills/opendocswork-mcp-office-processing/) | [install](https://skills.sh/aradotso/mcp-skills/opendocswork-mcp-office-processing) | [Aimino-Tech/opendocswork-mcp](https://github.com/Aimino-Tech/opendocswork-mcp) | 2026-06-02 |
-| [ida-mcp-headless-reverse-engineering](skills/ida-mcp-headless-reverse-engineering/) | [install](https://skills.sh/aradotso/mcp-skills/ida-mcp-headless-reverse-engineering) | [blacktop/ida-mcp-rs](https://github.com/blacktop/ida-mcp-rs) | 2026-06-03 |
-| [zabbix-mcp-server](skills/zabbix-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/zabbix-mcp-server) | [mpeirone/zabbix-mcp-server](https://github.com/mpeirone/zabbix-mcp-server) | 2026-06-03 |
-| [deepseek-claude-code-worker-mcp](skills/deepseek-claude-code-worker-mcp/) | [install](https://skills.sh/aradotso/mcp-skills/deepseek-claude-code-worker-mcp) | [louchi1984-coder/deepseek-claude-code-worker-mcp](https://github.com/louchi1984-coder/deepseek-claude-code-worker-mcp) | 2026-06-03 |
-| [unity-mcp-server](skills/unity-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/unity-mcp-server) | [AnkleBreaker-Studio/unity-mcp-server](https://github.com/AnkleBreaker-Studio/unity-mcp-server) | 2026-06-06 |
-| [ios-mcp-jailbreak-automation](skills/ios-mcp-jailbreak-automation/) | [install](https://skills.sh/aradotso/mcp-skills/ios-mcp-jailbreak-automation) | [witchan/ios-mcp](https://github.com/witchan/ios-mcp) | 2026-06-07 |
-| [notebooklm-mcp-cli](skills/notebooklm-mcp-cli/) | [install](https://skills.sh/aradotso/mcp-skills/notebooklm-mcp-cli) | [jacob-bd/notebooklm-mcp-cli](https://github.com/jacob-bd/notebooklm-mcp-cli) | 2026-06-07 |
-| [osint-tools-mcp-server](skills/osint-tools-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/osint-tools-mcp-server) | [frishtik/osint-tools-mcp-server](https://github.com/frishtik/osint-tools-mcp-server) | 2026-06-08 |
-| [mcpspend-cost-tracking](skills/mcpspend-cost-tracking/) | [install](https://skills.sh/aradotso/mcp-skills/mcpspend-cost-tracking) | [andreisirbu91-lab/MCPSpend](https://github.com/andreisirbu91-lab/MCPSpend) | 2026-06-09 |
-| [codedb-mcp-fast-code-intelligence](skills/codedb-mcp-fast-code-intelligence/) | [install](https://skills.sh/aradotso/mcp-skills/codedb-mcp-fast-code-intelligence) | [killop/codedb-mcp](https://github.com/killop/codedb-mcp) | 2026-06-09 |
-| [apple-health-mcp-server](skills/apple-health-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/apple-health-mcp-server) | [the-momentum/apple-health-mcp-server](https://github.com/the-momentum/apple-health-mcp-server) | 2026-06-09 |
-| [mcp-servers-for-revit-integration](skills/mcp-servers-for-revit-integration/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-servers-for-revit-integration) | [mcp-servers-for-revit/mcp-servers-for-revit](https://github.com/mcp-servers-for-revit/mcp-servers-for-revit) | 2026-06-10 |
-| [mcp-servers-reference](skills/mcp-servers-reference/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-servers-reference) | [Moh4696/50-essential-mcp-servers](https://github.com/Moh4696/50-essential-mcp-servers) | 2026-06-10 |
-| [essential-mcp-servers-reference](skills/essential-mcp-servers-reference/) | [install](https://skills.sh/aradotso/mcp-skills/essential-mcp-servers-reference) | [Moh4696/50-essential-mcp-servers](https://github.com/Moh4696/50-essential-mcp-servers) | 2026-06-10 |
-| [mcp-server-catalog-reference](skills/mcp-server-catalog-reference/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-server-catalog-reference) | [Moh4696/50-essential-mcp-servers](https://github.com/Moh4696/50-essential-mcp-servers) | 2026-06-10 |
-| [mcp-servers-essential-reference](skills/mcp-servers-essential-reference/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-servers-essential-reference) | [Moh4696/50-essential-mcp-servers](https://github.com/Moh4696/50-essential-mcp-servers) | 2026-06-10 |
-| [50-essential-mcp-servers-reference](skills/50-essential-mcp-servers-reference/) | [install](https://skills.sh/aradotso/mcp-skills/50-essential-mcp-servers-reference) | [Moh4696/50-essential-mcp-servers](https://github.com/Moh4696/50-essential-mcp-servers) | 2026-06-10 |
-| [multi-llm-mcp-server](skills/multi-llm-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/multi-llm-mcp-server) | [mai-yyy/multi-llm-mcp](https://github.com/mai-yyy/multi-llm-mcp) | 2026-06-10 |
-| [affine-mcp-server-integration](skills/affine-mcp-server-integration/) | [install](https://skills.sh/aradotso/mcp-skills/affine-mcp-server-integration) | [DAWNCR0W/affine-mcp-server](https://github.com/DAWNCR0W/affine-mcp-server) | 2026-06-12 |
-| [claude-tradingview-mcp-autotrading](skills/claude-tradingview-mcp-autotrading/) | [install](https://skills.sh/aradotso/mcp-skills/claude-tradingview-mcp-autotrading) | [jackson-video-resources/claude-tradingview-mcp-trading](https://github.com/jackson-video-resources/claude-tradingview-mcp-trading) | 2026-06-15 |
-| [excel-mcp-automation](skills/excel-mcp-automation/) | [install](https://skills.sh/aradotso/mcp-skills/excel-mcp-automation) | [sbroenne/mcp-server-excel](https://github.com/sbroenne/mcp-server-excel) | 2026-06-15 |
-| [huolala-figma-mcp](skills/huolala-figma-mcp/) | [install](https://skills.sh/aradotso/mcp-skills/huolala-figma-mcp) | [HuolalaTech/huolala-figma-mcp](https://github.com/HuolalaTech/huolala-figma-mcp) | 2026-06-17 |
-| [blockrun-mcp-live-data](skills/blockrun-mcp-live-data/) | [install](https://skills.sh/aradotso/mcp-skills/blockrun-mcp-live-data) | [BlockRunAI/blockrun-mcp](https://github.com/BlockRunAI/blockrun-mcp) | 2026-06-17 |
-| [codex-control-plane-mcp](skills/codex-control-plane-mcp/) | [install](https://skills.sh/aradotso/mcp-skills/codex-control-plane-mcp) | [aresyn/codex-control-plane-mcp](https://github.com/aresyn/codex-control-plane-mcp) | 2026-06-17 |
-| [matlab-mcp-server](skills/matlab-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/matlab-mcp-server) | [matlab/matlab-mcp-server](https://github.com/matlab/matlab-mcp-server) | 2026-06-18 |
-| [coding-tools-mcp-server](skills/coding-tools-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/coding-tools-mcp-server) | [xyTom/coding-tools-mcp](https://github.com/xyTom/coding-tools-mcp) | 2026-06-19 |
-| [elementor-mcp-wordpress-builder](skills/elementor-mcp-wordpress-builder/) | [install](https://skills.sh/aradotso/mcp-skills/elementor-mcp-wordpress-builder) | [msrbuilds/elementor-mcp](https://github.com/msrbuilds/elementor-mcp) | 2026-06-22 |
-| [railway-mcp-server](skills/railway-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/railway-mcp-server) | [railwayapp/railway-mcp-server](https://github.com/railwayapp/railway-mcp-server) | 2026-06-22 |
-| [mcp-db-server-stateless](skills/mcp-db-server-stateless/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-db-server-stateless) | [PerfectXM/mcp-db-server](https://github.com/PerfectXM/mcp-db-server) | 2026-06-22 |
-| [opentelemetry-mcp-server](skills/opentelemetry-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/opentelemetry-mcp-server) | [traceloop/opentelemetry-mcp-server](https://github.com/traceloop/opentelemetry-mcp-server) | 2026-06-22 |
-| [mcp-quickstart-scaffolder](skills/mcp-quickstart-scaffolder/) | [install](https://skills.sh/aradotso/mcp-skills/mcp-quickstart-scaffolder) | [G12789/mcp-quickstart](https://github.com/G12789/mcp-quickstart) | 2026-06-23 |
-| [codebase-memory-mcp-pro-knowledge-graph](skills/codebase-memory-mcp-pro-knowledge-graph/) | [install](https://skills.sh/aradotso/mcp-skills/codebase-memory-mcp-pro-knowledge-graph) | [win4r/codebase-memory-mcp-pro](https://github.com/win4r/codebase-memory-mcp-pro) | 2026-06-24 |
-| [godot-mcp-pro-integration](skills/godot-mcp-pro-integration/) | [install](https://skills.sh/aradotso/mcp-skills/godot-mcp-pro-integration) | [youichi-uda/godot-mcp-pro](https://github.com/youichi-uda/godot-mcp-pro) | 2026-06-30 |
-| [gemini-search-mcp-web-search](skills/gemini-search-mcp-web-search/) | [install](https://skills.sh/aradotso/mcp-skills/gemini-search-mcp-web-search) | [Sophomoresty/gemini-search-mcp](https://github.com/Sophomoresty/gemini-search-mcp) | 2026-06-30 |
-| [commercevault-edd-mcp-server](skills/commercevault-edd-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/commercevault-edd-mcp-server) | [dhapat3927/mcp-edd-analytics-vantage](https://github.com/dhapat3927/mcp-edd-analytics-vantage) | 2026-06-30 |
-| [commercevault-edd-commerce-orchestrator](skills/commercevault-edd-commerce-orchestrator/) | [install](https://skills.sh/aradotso/mcp-skills/commercevault-edd-commerce-orchestrator) | [dhapat3927/mcp-edd-analytics-vantage](https://github.com/dhapat3927/mcp-edd-analytics-vantage) | 2026-06-30 |
-| [logos-router-reasoning-mesh](skills/logos-router-reasoning-mesh/) | [install](https://skills.sh/aradotso/mcp-skills/logos-router-reasoning-mesh) | [rak7777/mythic-mcp-proxy](https://github.com/rak7777/mythic-mcp-proxy) | 2026-06-30 |
-| [commercevault-edd-ecommerce-api](skills/commercevault-edd-ecommerce-api/) | [install](https://skills.sh/aradotso/mcp-skills/commercevault-edd-ecommerce-api) | [dhapat3927/mcp-edd-analytics-vantage](https://github.com/dhapat3927/mcp-edd-analytics-vantage) | 2026-06-30 |
-| [ask-expert-consult-mcp-wisdom-cascade](skills/ask-expert-consult-mcp-wisdom-cascade/) | [install](https://skills.sh/aradotso/mcp-skills/ask-expert-consult-mcp-wisdom-cascade) | [pakgik01/ask-expert-consult-mcp](https://github.com/pakgik01/ask-expert-consult-mcp) | 2026-06-30 |
-| [logos-router-distributed-reasoning](skills/logos-router-distributed-reasoning/) | [install](https://skills.sh/aradotso/mcp-skills/logos-router-distributed-reasoning) | [rak7777/mythic-mcp-proxy](https://github.com/rak7777/mythic-mcp-proxy) | 2026-06-30 |
-| [logos-distributed-reasoning-router](skills/logos-distributed-reasoning-router/) | [install](https://skills.sh/aradotso/mcp-skills/logos-distributed-reasoning-router) | [rak7777/mythic-mcp-proxy](https://github.com/rak7777/mythic-mcp-proxy) | 2026-07-01 |
-| [darknet-mcp-server-threat-intelligence](skills/darknet-mcp-server-threat-intelligence/) | [install](https://skills.sh/aradotso/mcp-skills/darknet-mcp-server-threat-intelligence) | [badchars/darknet-mcp-server](https://github.com/badchars/darknet-mcp-server) | 2026-07-01 |
-| [browser-mcp-control](skills/browser-mcp-control/) | [install](https://skills.sh/aradotso/mcp-skills/browser-mcp-control) | [UHolli/browser-mcp](https://github.com/UHolli/browser-mcp) | 2026-07-02 |
-| [easy-notion-mcp-integration](skills/easy-notion-mcp-integration/) | [install](https://skills.sh/aradotso/mcp-skills/easy-notion-mcp-integration) | [FR0ZON3/notion-mcp](https://github.com/FR0ZON3/notion-mcp) | 2026-07-03 |
-| [mcpsnoop-mcp-debugging](skills/mcpsnoop-mcp-debugging/) | [install](https://skills.sh/aradotso/mcp-skills/mcpsnoop-mcp-debugging) | [kerlenton/mcpsnoop](https://github.com/kerlenton/mcpsnoop) | 2026-07-03 |
-| [voicebox-voice-mcp-agent](skills/voicebox-voice-mcp-agent/) | [install](https://skills.sh/aradotso/mcp-skills/voicebox-voice-mcp-agent) | [h1papc11/voice-mcp-agent](https://github.com/h1papc11/voice-mcp-agent) | 2026-07-04 |
-| [security-detections-mcp](skills/security-detections-mcp/) | [install](https://skills.sh/aradotso/mcp-skills/security-detections-mcp) | [MHaggis/Security-Detections-MCP](https://github.com/MHaggis/Security-Detections-MCP) | 2026-07-05 |
-| [amazon-sorftime-research-mcp-skill](skills/amazon-sorftime-research-mcp-skill/) | [install](https://skills.sh/aradotso/mcp-skills/amazon-sorftime-research-mcp-skill) | [liangdabiao/amazon-sorftime-research-MCP-skill](https://github.com/liangdabiao/amazon-sorftime-research-MCP-skill) | 2026-07-07 |
-| [shopify-mcp-server](skills/shopify-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/shopify-mcp-server) | [Cesarjoquin/shopify-mcp](https://github.com/Cesarjoquin/shopify-mcp) | 2026-07-07 |
-| [yuque-mcp-server](skills/yuque-mcp-server/) | [install](https://skills.sh/aradotso/mcp-skills/yuque-mcp-server) | [yuque/yuque-mcp-server](https://github.com/yuque/yuque-mcp-server) | 2026-07-08 |
-| [drissionpage-mcp-browser-automation](skills/drissionpage-mcp-browser-automation/) | [install](https://skills.sh/aradotso/mcp-skills/drissionpage-mcp-browser-automation) | [jumodada/Drissionpage-MCP-Server](https://github.com/jumodada/Drissionpage-MCP-Server) | 2026-07-08 |
-| [kogiqa-mcp-browser-automation](skills/kogiqa-mcp-browser-automation/) | [install](https://skills.sh/aradotso/mcp-skills/kogiqa-mcp-browser-automation) | [atagon-GmbH/kogiqa-mcp](https://github.com/atagon-GmbH/kogiqa-mcp) | 2026-07-08 |
-| [sts2mcp-slay-the-spire-2-ai-agent](skills/sts2mcp-slay-the-spire-2-ai-agent/) | [install](https://skills.sh/aradotso/mcp-skills/sts2mcp-slay-the-spire-2-ai-agent) | [Gennadiyev/STS2MCP](https://github.com/Gennadiyev/STS2MCP) | 2026-07-08 |
-| [sdl-mcp-symbol-delta-ledger](skills/sdl-mcp-symbol-delta-ledger/) | [install](https://skills.sh/aradotso/mcp-skills/sdl-mcp-symbol-delta-ledger) | [GlitterKill/sdl-mcp](https://github.com/GlitterKill/sdl-mcp) | 2026-07-11 |
-| [solana-mcp-vybe](skills/solana-mcp-vybe/) | [install](https://skills.sh/aradotso/mcp-skills/solana-mcp-vybe) | [vybenetwork/solana-mcp-vybe](https://github.com/vybenetwork/solana-mcp-vybe) | 2026-07-15 |
-| [comfyui-mcp-agent](skills/comfyui-mcp-agent/) | [install](https://skills.sh/aradotso/mcp-skills/comfyui-mcp-agent) | [artokun/comfyui-mcp](https://github.com/artokun/comfyui-mcp) | 2026-07-18 |
-<!-- SKILL_INDEX -->
+## Upstream
 
----
-
-*Part of the [ara.so](https://ara.so) trending-skills family. Sibling collections: [trending-skills](https://github.com/Aradotso/trending-skills).*
+- Game mod and server: [Gennadiyev/STS2MCP](https://github.com/Gennadiyev/STS2MCP)
+- Original skill collection: [Aradotso/mcp-skills](https://github.com/Aradotso/mcp-skills)
