@@ -143,7 +143,7 @@ Reloading and repeating identical actions normally reproduces identical outcomes
 - choose a different event option or card-selection order;
 - finish the fight through a different action sequence before checking rewards.
 
-Do not promise a reroll. The game can use separate or fixed RNG streams, so some rewards, upgrades, transforms, intents, or event results remain identical. Label an unchanged reload `0.5nosl`: information was gained, but the branch was not materially rerolled.
+Do not promise a reroll. The game can use separate or fixed RNG streams, so some rewards, upgrades, transforms, intents, or event results remain identical. Record every real reload truthfully in the SL ledger. In Tower-P commentary, `0.5nosl` is the joke told after an actual save/load: `nosl` claims a no-save/load playstyle, while `0.5nosl` stubbornly half-denies the SL that really occurred. It is not a technical label for an unchanged deterministic outcome or for information gathering. State the actual reload and result even when using the joke.
 
 Keep an SL ledger:
 
