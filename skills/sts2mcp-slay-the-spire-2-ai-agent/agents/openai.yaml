@@ -1,0 +1,4 @@
+interface:
+  display_name: "STS2MCP Slay the Spire 2 Agent"
+  short_description: "Control, audit, and review Slay the Spire 2 runs"
+  default_prompt: "Use $sts2mcp-slay-the-spire-2-ai-agent to inspect the current run, make safe decisions, and verify the result."

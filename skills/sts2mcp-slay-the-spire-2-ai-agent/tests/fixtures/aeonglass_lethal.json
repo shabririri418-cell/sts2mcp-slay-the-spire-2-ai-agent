@@ -1,0 +1,32 @@
+{
+  "player_hp": 58,
+  "current_block": 30,
+  "buffer_charges": 0,
+  "damage_packets": [
+    {
+      "source": "three visible Withering+3",
+      "category": "status",
+      "damage": 12,
+      "hits": 3,
+      "order": 0
+    },
+    {
+      "source": "Aeonglass attack",
+      "category": "enemy",
+      "damage": 47,
+      "hits": 1,
+      "order": 2
+    }
+  ],
+  "pending_counter_triggers": [
+    {
+      "source": "Withering Presence",
+      "counter": 0,
+      "category": "queued",
+      "damage": 12,
+      "hits": 1,
+      "order": 1
+    }
+  ],
+  "unknown_effects": []
+}

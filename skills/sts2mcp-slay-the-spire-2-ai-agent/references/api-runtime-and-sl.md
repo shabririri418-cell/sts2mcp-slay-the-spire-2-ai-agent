@@ -2,6 +2,15 @@
 
 Read this file completely before controlling a run.
 
+## Contents
+
+- Current REST surface and common actions
+- Timing, turn locks, and selection states
+- Merchant-event potion timing and observed API issues
+- Save/load checkpoints, relaunch diagnosis, and timeline changes
+- Mechanic-first branch escalation
+- Victory verification
+
 ## Current REST surface
 
 Base URL: `http://localhost:15526`
@@ -56,6 +65,39 @@ Use `target` only when the card or potion requires an enemy. Use the current `en
 
 The previous turn-lock failure came from ending turns while a card animation or selection mode still owned the hand. State-driven settlement and action gating prevent it without paying the worst-case delay on every action.
 
+### Deterministic end-turn auditor
+
+Normalize the settled live state into an ordered ledger and run:
+
+```powershell
+py -3 <skill-path>\scripts\audit_turn.py <ledger.json>
+```
+
+Use this input shape:
+
+```json
+{
+  "player_hp": 58,
+  "current_block": 30,
+  "buffer_charges": 0,
+  "damage_packets": [
+    {"source": "visible Status", "category": "status", "damage": 12, "hits": 3, "order": 0},
+    {"source": "enemy attack", "category": "enemy", "damage": 47, "hits": 1, "order": 2}
+  ],
+  "pending_counter_triggers": [
+    {"source": "delayed Status", "counter": 0, "category": "queued", "damage": 12, "hits": 1, "order": 1}
+  ],
+  "unknown_effects": []
+}
+```
+
+Supply post-modifier damage per hit and the real resolution order from current
+rules or observed state. Categories are `enemy`, `status`, `queued`, or
+`other`. Exit code `0` means the fully known ledger leaves positive HP; `1`
+means lethal, exact-zero HP, or unknown effects; `2` means invalid input. When
+effects are unknown, `worst_case_total` and `survival_margin` are `null`; do not
+use the known-damage subtotal as proof of safety.
+
 ## Selection-state matrix
 
 | `state_type` | Action | Notes |
@@ -98,16 +140,6 @@ Do not open the purchase screen first: that screen removes the merchant target n
 - Post-run `game_over.player.hp == 0` does not prove death. The newest run-history entry is authoritative.
 - `compendium.current_run.is_in_progress` can lag immediately after the ending; prefer `sections.run_history.entries`.
 
-## Boss and combat lessons from an A10 Ironclad run
-
-- Experimental Subject has multiple forms. A lethal can temporarily leave `battle.enemies` empty while combat remains active. Do not report victory or send attacks into the empty state. Self-targeted healing can still resolve in this window; then `end_turn` advances the revival.
-- Its first form can gain strength whenever a Skill is played. Prefer attack-only turns when they solve the incoming damage, and use Neow's Fury after playing zero-cost Strikes so those Strikes can be selected from the discard pile and replayed.
-- Its second form escalates from `11x3` upward and adds a Wound for each attack instance that deals unblocked damage. Full block has extra value because it prevents both HP loss and draw-pile pollution. Tungsten Rod applies to each unblocked hit; if only 1 damage remains after block, it reduces that hit to 0 and prevents the Wound trigger.
-- Trigger an exhaust effect before Evil Eye when possible. Evil Eye then grants both block segments; with Unmovable, let Evil Eye or the strongest replaying block card take the first-block doubling.
-- A replaying upgraded Defend can show only its current segment. With Dexterity and Unmovable, an observed `20 block, Replay 1` resolved as 30 total: 20 for the doubled first segment plus 10 for the replay. Repoll the actual block total instead of multiplying the preview twice.
-- Its final form alternates Intangible windows with vulnerable damage windows and can inject five Status cards at once. On Intangible turns, avoid expensive self-damaging attacks for 1 damage; prioritize defense, scaling, draw setup, and exhausting Status cards. Preserve enough block, draw, or an emergency potion for the post-Status hand because five Wounds can create a forced lethal even from a healthy-looking HP total.
-- Plan HP across all forms rather than one bar. A potion spent to survive form two may still leave no answer to the final form, so compare the immediate prevention value with the known next-form spike before consuming it.
-
 ## Save/load timeline technique
 
 Use SL proactively when a pivotal branch is lost, a different RNG-consuming order may materially improve the run, an API defect requires recovery, or a retry adds useful gameplay entertainment. Per-use user authorization is not required unless the user has explicitly prohibited SL. Treat it as controlled branch exploration, not as save-file editing, and announce the checkpoint and objective before restarting.
@@ -143,19 +175,37 @@ Reloading and repeating identical actions normally reproduces identical outcomes
 - choose a different event option or card-selection order;
 - finish the fight through a different action sequence before checking rewards.
 
-Do not promise a reroll. The game can use separate or fixed RNG streams, so some rewards, upgrades, transforms, intents, or event results remain identical. Label an unchanged reload `0.5nosl`: information was gained, but the branch was not materially rerolled.
+Do not promise a reroll. The game can use separate or fixed RNG streams, so some rewards, upgrades, transforms, intents, or event results remain identical. Record every real reload truthfully in the SL ledger. In Tower-P commentary, `0.5nosl` is the joke told after an actual save/load: `nosl` claims a no-save/load playstyle, while `0.5nosl` stubbornly half-denies the SL that really occurred. It is not a technical label for an unchanged deterministic outcome or for information gathering. State the actual reload and result even when using the joke.
 
 Keep an SL ledger:
 
 ```text
 checkpoint: act/floor/room
+mechanic hypothesis: exact trigger/timing being tested
 branch A: actions -> HP/reward/result
 branch B: actions -> HP/reward/result
+worst threat: visible + Status + queued + unknown
 chosen: branch X, objective reason
 restarts: N
 ```
 
 Prefer the branch with the best run-winning probability, not merely the flashiest immediate roll.
+
+### Mechanic-first branch escalation
+
+- When two branches fail to the same trigger or transition, stop making only
+  local action-order permutations. Promote the shared failure to a mechanic
+  hypothesis and branch from the earliest turn that can change its counter,
+  resource reservation, Status inflow, or kill clock.
+- When timing or rules text is uncertain, use one minimal probe branch to learn
+  the trigger. Record the exact before/after state and real reload. Do not mix a
+  mechanic experiment with an unrelated high-roll search.
+- Re-run the end-turn audit for every branch. Comparing enemy HP alone is
+  insufficient; record survival margin, queued damage, potion state, and the
+  next-turn hand or draw consequence.
+- Stop when the mechanic is stable and every earlier meaningful branch has the
+  same proven loss. More retries are not evidence when they change no relevant
+  variable.
 
 ## Victory verification
 

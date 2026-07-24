@@ -5,6 +5,16 @@ deck-building policy behind card rewards, removals, upgrades, routing, shops,
 and multiplayer coordination. Live state and current card text always outrank
 the guide-derived heuristics below.
 
+## Contents
+
+- Version gate and compact deck model
+- Reward and evidence policy
+- Act planning and routing
+- Character heuristics
+- Multiplayer coordination
+- SL experiments
+- Source notes
+
 ## Version gate
 
 1. Read the game/build version from the REST root, profile, compendium, or run
@@ -35,7 +45,14 @@ defense: block / weak / strength reduction / prevention and its timing
 scaling: damage and defense growth by turns 3, 6, and 10
 engine: energy / draw / generation / exhaust-discard-orb support
 consistency: deck size / opening dead draws / status tolerance
+play_density: useful output per card played / known play-count punishments
+status_inflow: expected Status cards or damage entering hand/draw/discard
+status_outflow: discard / exhaust / cleanse / redraw capacity
+defense_redundancy: independent block / weak / strength reduction / prevention lines
+kill_clock: projected lethal turn against the next gate
+survival_clock: first turn on which the current defense plan fails
 sustain: current HP / healing / potion coverage
+resource_dependency: potions or HP normally spent per elite and boss
 upgrade_pressure: critical upgrades still waiting
 ```
 
@@ -51,7 +68,8 @@ At a card reward, apply this order:
 
 1. Name the next gate and the deck's largest quantified gap.
 2. Evaluate each card's first-shuffle value, later-shuffle value, energy and draw
-   burden, upgrade demand, and interaction with relics and current cards.
+   burden, upgrade demand, interaction with relics and current cards, and whether
+   it duplicates a job already covered.
 3. Prefer a card that materially clears the next gate even if it is only a
    bridge. A working transition card is more valuable than an incomplete
    endgame package.
@@ -61,6 +79,12 @@ At a card reward, apply this order:
 5. Take speculative scaling only when the deck can survive while setting it up.
 6. Skip when every choice is redundant, too slow, or worsens the first shuffle
    more than it improves the named gate.
+7. Against a known encounter that punishes card plays, Skills, Attacks, powers,
+   Status accumulation, or a narrow damage family, count that matchup cost
+   explicitly. A cantrip is not free when playing it advances an enemy trigger.
+8. At shops, compare the best purchase with removal, potion replacement, and
+   leaving with gold. Do not evaluate a marginal card in isolation from the
+   consistency that a removal would buy.
 
 Do not force a thin deck or a fixed card count. Measure effective consistency:
 a larger deck with draw, energy, and status control can be more reliable than a
@@ -120,6 +144,9 @@ the ledger; report only when it changes a decision.
   the first two turns collapse.
 - Reassess transition cards: remove or exhaust the bridges whose jobs are now
   duplicated; retain bridges that still solve a matchup.
+- Mark a deck as resource-dependent when it repeatedly spends two potions on
+  elites or bosses. Treat the label as a routing and upgrade warning, not proof
+  that any individual potion use was wrong.
 
 ### Act 3 and bosses
 
@@ -128,10 +155,20 @@ the ledger; report only when it changes a decision.
 - Value redundancy for the key engine when one status-heavy hand or one lost
   component would otherwise end the run.
 - Plan HP and potions across all boss forms, not just the current health bar.
+- Compare `kill_clock` with `survival_clock` before entering the boss and again
+  after pivotal scaling turns. A line whose defense expires before lethal needs
+  earlier burst, mitigation, or resource use; do not wait for the collapse turn.
+- Inspect encounter-specific play-density and Status pressure. Preserve a
+  lower-play-count alternative when the normal engine relies on many cheap
+  cards or repeated generated actions.
 
 Routing maximizes run-winning probability, not raw rewards. Compare expected HP
 after the route, upgrade access, shop value at current gold, potion coverage,
 and whether the route exposes the deck to a matchup it has not solved.
+When resting at full HP solely to obtain another benefit such as potions,
+compare that benefit with the strongest available upgrade and the option to
+retain an existing potion. Record the reason instead of counting the room as a
+normal heal.
 
 ## Character heuristics
 
