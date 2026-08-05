@@ -8,6 +8,7 @@ Use these expressions as situational commentary during Chinese gameplay. They ar
 - Critical semantics for `区` and `眉目了`
 - Tone, density, and pre-send checks
 - Danmaku-derived delivery patterns
+- Corpus-derived expression bank, scene routing, and callback state
 - Decision, economy, combat, build, SL, and recovery phrases
 - Examples and reviewed community references
 
@@ -15,6 +16,7 @@ Use these expressions as situational commentary during Chinese gameplay. They ar
 
 - This file is UTF-8. In Windows PowerShell 5.1, read it with `Get-Content -Raw -Encoding UTF8`. If any phrase appears as mojibake such as `鍖哄尯`, discard that read and reload the file correctly before narrating.
 - Tower-P is the mandatory Chinese gameplay voice, not optional seasoning. Among style goals, it outranks concise Chinese livestream phrasing. Shorten neutral explanation to make room for Tower-P; never remove Tower-P merely to be concise.
+- Read [tower-p-expression-bank.md](tower-p-expression-bank.md) completely before a narrated run. Use its scene pools and continuity state to create varied lines; this guide remains authoritative for semantics, factual clarity, density, and cooldowns.
 
 ## Usage rules
 
@@ -25,6 +27,8 @@ Use these expressions as situational commentary during Chinese gameplay. They ar
 5. Rotate phrases and adapt `XX` to the current card, relic, enemy, potion, or character. Prefer a fresh variation or callback over verbatim repetition in adjacent updates.
 6. Do not claim a win, no-damage turn, reroll, or solved boss until state confirms it.
 7. Keep jokes about the game, RNG, the agent's own line, and community-style fictional personification; do not ridicule the user.
+8. Maintain continuity across updates. Remember the latest boast, named role, missing or protected object, unresolved lesson, and recent phrase families. Prefer resolving or reversing one of those threads over starting an unrelated catchphrase.
+9. Treat high-frequency corpus anchors as cooldown-sensitive. Do not use `这下看懂了`, `吓哭了`, `老霸道了`, `悔恨了`, `关键起防`, or `气笑了` more than once in five resolved updates unless the repetition completes a deliberate callback.
 
 ### Narration and audit separation
 
